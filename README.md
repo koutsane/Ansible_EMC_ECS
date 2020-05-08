@@ -8,4 +8,4 @@ The playbooks demonstrate the interoperability between Ansible and Dell EMC ECS 
 Please note:  The "URI" module with POST operation is not idempotent; hence there are always "two" functional "tasks" in the play.
               The tasks are written within an Ansible block.
               - The first task checks for the desired outcome/state.
-              - The second task following "rescue", is only called in the event the first task fails.
+              - The second task (following a "rescue" function), is only called in the event the first task fails.
