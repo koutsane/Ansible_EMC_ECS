@@ -1,5 +1,5 @@
 # Ansible_EMC_ECS
-a collection of ansible playbooks for Dell EMC ECS
+A collection of ansible playbooks for Dell EMC ECS
 
 The playbooks here demonstrate how we can use ansible to interact with Dell EMC ECS.
 1. The folder ECSmgmt has example playbooks using the ansible "URI" module with the ECS management API
