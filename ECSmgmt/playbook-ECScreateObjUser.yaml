@@ -1,0 +1,89 @@
+---
+- name: ECS create new NameSpace
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    username: "<ENTER USER NAME>"
+    password: "<ENTER YOUR SECRET KEY>"
+    ECS_host: "<ECS IP ADDRESS or HOSTNAME:PORT>"
+    nameSpace: "<ENTER ECS NAMESPACE>"
+    objUser: "<ENTER OBJECT USER>"
+    secretKey: "" ### If you want to specify a key add here, or leave blank to generate
+
+  tasks:
+
+  - name: Get ECS API authentication token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/login
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+      return_content: yes
+    register: results_login
+#    no_log: True
+
+
+  - block:
+      - name: Connect to ECS | check for existing Object User
+        uri:
+          validate_certs: no
+          url: "https://{{ECS_host}}/object/users/{{ objUser }}/info.json?namespace={{ nameSpace }}"
+          method: GET
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+            X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+          body_format: json
+          body:
+            {
+              namespace: "{{ nameSpace }}",
+            }
+          return_content: yes
+        register: results_check
+      - debug:
+         #var: results_check
+         #msg="{{results_check}}"
+
+    rescue:
+      - name: Connect to ECS | create new Object User "{{ objUser }}"
+        uri:
+          validate_certs: no
+          url: https://{{ECS_host}}/object/users.json
+          method: POST
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+            X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+          body_format: json
+          body:
+            {
+              user: "{{ objUser }}",
+              namespace: "{{ nameSpace }}"
+            }
+          return_content: yes
+        changed_when: true
+        register: results_CreateObjUser
+      
+      - name: Connect to ECS | add secret key to user "{{ objUser }}"
+        uri:
+          validate_certs: no
+          url: "https://{{ECS_host}}/object/user-secret-keys/{{ objUser }}"
+          method: POST
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+            X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+          body_format: json
+          body:
+            {
+              namespace: "{{ nameSpace }}",
+              secretkey: "{{secretKey }}"
+            }
+          return_content: yes
+        changed_when: true
+        register: results_CreateSecretKey
+

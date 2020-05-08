@@ -1,0 +1,41 @@
+---
+- name: ECS list new NameSpace
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    username: "<ENTER USER NAME>"
+    password: "<ENTER YOUR SECRET KEY>"
+    ECS_host: "<ECS IP ADDRESS or HOSTNAME:PORT>"
+    nameSpace: ansible_ns
+
+  tasks:
+
+  - name: Get ECS API authentication token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/login
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+      return_content: yes
+    register: results_login
+#    no_log: True
+
+  - name: Connect to ECS | list namespace {{ nameSpace }}"
+    uri:
+      validate_certs: no
+      url: "https://{{ECS_host}}/object/namespaces/namespace/{{ nameSpace }}"
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      body_format: json
+      return_content: yes
+    register: results_ListNameSpace
+
+  - debug:
+     msg="{{ results_ListNameSpace }}"

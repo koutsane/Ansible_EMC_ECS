@@ -1,0 +1,27 @@
+---
+########## REQUIRES PYTHON3 and BOTO3 #############
+- name: ECS Create S3 bucket
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    username: "<ENTER USER NAME>"
+    password: "<ENTER YOUR SECRET KEY>"
+    ECS_host: "<ECS IP ADDRESS or HOSTNAME:PORT>"
+
+  tasks:
+  
+    - name: Connect to ECS | Create S3 bucket
+      aws_s3:
+        bucket: ansible_aws_s3_bucket
+        mode: create
+        permission: public-read
+        s3_url: http://{{ ECS_host }}/
+        validate_certs: no
+        encrypt: no
+        rgw: true
+        aws_access_key: "{{ username }}"
+        aws_secret_key: "{{ password }}"
+      register: results_CreateBucket
+
+    - debug:
+        msg="{{ results_CreateBucket }}"

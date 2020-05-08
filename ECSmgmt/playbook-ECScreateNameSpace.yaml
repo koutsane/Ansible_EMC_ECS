@@ -1,0 +1,69 @@
+---
+- name: ECS create new NameSpace
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    username: "<ENTER USER NAME>"
+    password: "<ENTER YOUR SECRET KEY>"
+    ECS_host: "<ECS IP ADDRESS or HOSTNAME:PORT>"
+    nameSpace: "<ENTER ECS NAMESPACE>"
+    default_vpool_rg: "<ENTER Replication Group vpool identifier>" ## Example: "urn:storageos:ReplicationGroupInfo:ec0d2999-ef3e-489b-9465-786c446434a8:global"
+
+  tasks:
+
+  - name: Get ECS API authentication token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/login
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+      return_content: yes
+    register: results_login
+#    no_log: True
+
+
+  - block:
+      - name: Connect to ECS | check for existing namespace
+        uri:
+          validate_certs: no
+          url: "https://{{ECS_host}}/object/namespaces/namespace/{{ nameSpace }}"
+          method: GET
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+            X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+          body_format: json
+          body:
+            {
+              namespace: "{{ nameSpace }}",
+            }
+          return_content: yes
+        register: results_check
+        #- debug:
+        #  msg="{{ results_check }}"
+
+    rescue:
+      - name: Connect to ECS | create new namespace
+        uri:
+          validate_certs: no
+          url: https://{{ECS_host}}/object/namespaces/namespace.json
+          method: POST
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+            X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+          body_format: json
+          body:
+            {
+              namespace: "{{ nameSpace }}",
+              default_data_services_vpool: "{{ default_vpool_rg }}"
+            }
+          return_content: yes
+        changed_when: true
+        register: results_CreateNameSpace
+        #- debug:
+        #  msg="{{ results_CreateNameSpace }}"
