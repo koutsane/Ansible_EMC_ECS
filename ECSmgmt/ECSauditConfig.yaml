@@ -1,15 +1,18 @@
 ---
-- name: check configuration and warn on change
+- name: check configuration and log subsequent configuration changes
   hosts: Dell_EMC_ECS
-  gather_facts: yes ### USED TO GET LOCAL DATE AND TIME ###
+  gather_facts: yes ### Required true to store date and time from ansible_date_time variable
   vars:
-    username: "<ENTER USER NAME>"
-    password: "<ENTER YOUR SECRET KEY>"
-    ECS_host: "<ECS IP ADDRESS or HOSTNAME:PORT>"
-    nameSpace: "<ENTER YOUR ECS NAMESPACE>"
-    DateTimeStamp: "{{ansible_date_time.date}}.{{ansible_date_time.time}}"
-    LogDir: ./ECSauditlog/ ### Example log destination ###
-    ECSPrevState: "{{LogDir}}playbook-ECSauditConfig_Example.prev"
+    DateTimeStamp: "{{ansible_date_time.date}}.{{ansible_date_time.time}}" ### date time example
+    username: "" ### E.g. "root"
+    password: "" ### E.g. "ChangeMe"
+    ECS_host: "" ### E.g. "192.168.2.21:4443"
+    LogDir: "" ### E.g. "./ECSauditlog/"
+    nameSpace: "" ### E.g. "ansible_ns"
+    ######################################################################
+    #### Edit only as required - File is used to store previous config ###
+    ECSPrevState: "{{LogDir}}ECSauditConfig.prev" 
+    ######################################################################
 
   tasks:
 
