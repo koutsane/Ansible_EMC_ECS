@@ -53,7 +53,7 @@
         headers:
           Content-Type: application/json
           Accept: application/json
-        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
         body_format: json
         return_content: yes
       failed_when: NameSpace == "" or NewAdmin == "" or results_checkMgmtUser.status != 200 or NewAdmin not in results_checkMgmtUser.content
