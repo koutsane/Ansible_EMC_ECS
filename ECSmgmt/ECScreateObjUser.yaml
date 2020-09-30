@@ -109,6 +109,7 @@
     - name: userlist
       lineinfile:
         create: yes
+        mode: '0444'
         dest: "{{ logFile }}"
         line: "{{ results_CreateObjUser | json_query('results[*].[json]') | to_nice_json }} {{ results_CreateSecretKey | json_query('results[*].[json]') | to_nice_json }}" 
         insertafter: EOF

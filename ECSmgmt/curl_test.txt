@@ -1,3 +1,7 @@
 yum install curl jq
-curl -k https://<YOUR ECS URL>:4443/login?using-cookies=true -u "username:password" -c cookiefile -v
+
+#### get login token from ECS ####
+curl -k https://<YOUR ECS URL>:4443/login?using-cookies=true -u '<username>:<password>' -c cookiefile -v
+
+#### use token to list vpools / replication Group ####
 curl -k https://<YOUR ECS URL>:4443/vdc/data-service/vpools -H "Content-Type: application/json" -H "Accept:application/json" -b cookiefile | jq
