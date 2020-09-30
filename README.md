@@ -5,6 +5,7 @@ The playbooks demonstrate the interoperability between Ansible and Dell EMC ECS 
 1. The folder ECSmgmt has example playbooks using the ansible "URI" module with the ECS management API
 2. The folder ECSs3 has an example playbook using the ansible "AWS_S3" module with ECS S3 Data API
 
-Requirements - install below packages from pip package manager:
+Requirements - Install below packages from pip package manager
+
 pip install jmespath
 pip install boto3
