@@ -1,7 +1,7 @@
 ---
 ########### USE ECS MGMT API with ECS_TESTDRIVE ACCOUNT #############
 - name: ECS delete bucket with management API
-  hosts: ecs_testdrive
+  hosts: Dell_EMC_ECS
   gather_facts: False
   vars:
     username: "" ### ECS management user, E.g. root

@@ -45,3 +45,18 @@
     register: results_CreateNameSpace
     failed_when: default_vpool_rg == "" or nameSpace == ""
     changed_when:  results_CreateNameSpace.status == 200
+
+  - name: Logout ECS API token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      #url: https://{{ECS_host}}/logout?force=true
+      url: https://{{ECS_host}}/logout
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      return_content: yes
+    register: results_logout

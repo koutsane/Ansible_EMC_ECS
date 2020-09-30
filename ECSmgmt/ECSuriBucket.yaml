@@ -1,7 +1,7 @@
 ---
 ########### USE ECS MGMT API ACCOUNT TO create S3 bucket #############
 - name: ECS create new S3 bucket with management API
-  hosts: ecs_testdrive
+  hosts: Dell_EMC_ECS
   gather_facts: False
   vars:
     username: "" ### ECS management user, E.g. root
@@ -28,7 +28,7 @@
     no_log: True
 
   - block:
-    - name: Connect to ECS | check for existing Object User: "{{ bucketOwner }}"
+    - name: Connect to ECS | check for existing Object User "{{ bucketOwner }}"
       uri:
         validate_certs: no
         url: "https://{{ECS_host}}/object/users/{{ bucketOwner }}/info.json?namespace={{ NameSpace }}"
@@ -43,7 +43,7 @@
       register: results_checkObjUser
 
     rescue:
-    - name: Connect to ECS | check for existing Mgmt User: "{{ bucketOwner }}"
+    - name: Connect to ECS | check for existing Mgmt User "{{ bucketOwner }}"
       uri:
         validate_certs: no
         url: "https://{{ECS_host}}/vdc/users.json"
@@ -54,9 +54,9 @@
           X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
         body_format: json
         return_content: yes
-      failed_when: NameSpace == "" or bucketOwner == "" or BucketName == "" or results_checkMgmtUser.status != 200 or {{ bucketOwner }} not in results_checkMgmtUser
+      failed_when: NameSpace == "" or bucketOwner == "" or BucketName == "" or results_checkMgmtUser.status != 200 or bucketOwner not in results_checkMgmtUser.content
       register: results_checkMgmtUser
-  
+
   - name: Connect to ECS | create new bucket "{{ BucketName }}"
     uri:
       validate_certs: no
@@ -76,7 +76,7 @@
           "retention": "3",
           "namespace": "{{ NameSpace }}"
         }
-        #return_content: yes
+      #return_content: yes
     failed_when: NameSpace == "" or bucketOwner == "" or BucketName == ""
     changed_when: results_CreateBucket.status == 200
     register: results_CreateBucket
@@ -89,7 +89,8 @@
       validate_certs: no
       user: "{{ username }}"
       password: "{{ password }}"
-      url: https://{{ECS_host}}/logout?force=true
+      #url: https://{{ECS_host}}/logout?force=true
+      url: https://{{ECS_host}}/logout
       method: GET
       headers:
         Content-Type: application/json

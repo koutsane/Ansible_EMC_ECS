@@ -1,7 +1,7 @@
 ---
 ########## REQUIRES PYTHON3 and BOTO3 #############
 - name: ECS Create S3 bucket
-  hosts: ecs_testdrive
+  hosts: Dell_EMC_ECS
   gather_facts: False
   vars:
     ################### TEST DRIVE EXAMPLE #####################

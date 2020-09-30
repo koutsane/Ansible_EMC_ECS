@@ -74,6 +74,21 @@
         dest: "{{ ECSPrevState }}"
       changed_when: false
 
+    - name: Logout ECS API token
+      uri:
+        validate_certs: no
+        user: "{{ username }}"
+        password: "{{ password }}"
+       #url: https://{{ECS_host}}/logout?force=true
+        url: https://{{ECS_host}}/logout
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        return_content: yes
+      register: results_logout
+
   ### Save previous and current changes for audit purposes ###
   handlers:
 
