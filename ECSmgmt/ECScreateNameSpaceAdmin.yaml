@@ -29,6 +29,36 @@
     register: results_login
     no_log: True
 
+  - block:
+    - name: Connect to ECS | check for existing Object User: "{{ NewAdmin }}"
+      uri:
+        validate_certs: no
+        url: "https://{{ECS_host}}/object/users/{{ NewAdmin }}/info.json?namespace={{ NameSpace }}"
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        body_format: json
+        return_content: yes
+      failed_when: NameSpace == "" or NewAdmin == "" or results_checkObjUser.status != 200
+      register: results_checkObjUser
+
+    rescue:
+    - name: Connect to ECS | check for existing Mgmt User: "{{ NewAdmin }}"
+      uri:
+        validate_certs: no
+        url: "https://{{ECS_host}}/vdc/users.json"
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        body_format: json
+        return_content: yes
+      failed_when: NameSpace == "" or results_checkMgmtUser.status != 200 or {{ NewAdmin }} not in results_checkMgmtUser
+      register: results_checkMgmtUser
+
   - name: Connect to ECS | Get list of existing namespace admins 
     uri:
       validate_certs: no

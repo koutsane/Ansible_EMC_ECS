@@ -8,7 +8,6 @@
     password: "" ### ECS management user password, E.g. ChangeMe
     ECS_host: "" ### E.g. "192.168.2.21:4443"
     NameSpace: "" ### E.g. "ansible_ns"
-    bucketOwner: "" ### bucket owner, E.g. "ansible_admin"
     BucketName: "" ### E.g. "new-s3-bucket"
 
   tasks:
@@ -37,7 +36,7 @@
         Accept: application/json
         X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
       body_format: json
-    failed_when: false
+    failed_when: NameSpace == "" or BucketName == ""
     changed_when: results_DeleteBucket.status == 200
     register: results_DeleteBucket
 

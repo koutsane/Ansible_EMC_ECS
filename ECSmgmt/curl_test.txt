@@ -1,2 +1,3 @@
-curl -L --location-trusted -k https://<YOUR ECS URL>:4443/login?using-cookies=true -u "username:password" -c cookiefile -v
-curl -k https://<YOUR ECS URL>:4443/object/namespaces/namespace/ansible_ns -H "Content-Type: application/json" -H "Accept:application/json" -b cookiefile | jq
+yum install curl jq
+curl -k https://<YOUR ECS URL>:4443/login?using-cookies=true -u "username:password" -c cookiefile -v
+curl -k https://<YOUR ECS URL>:4443/vdc/data-service/vpools -H "Content-Type: application/json" -H "Accept:application/json" -b cookiefile | jq
