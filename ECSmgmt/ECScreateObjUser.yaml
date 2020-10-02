@@ -55,7 +55,7 @@
       return_content: yes
     register: results_CreateObjUser
     changed_when: results_CreateObjUser.status == 200
-    failed_when: false
+    failed_when: nameSpace == "" or objUser = ""
 
   #- debug:
   #    var: results_CreateObjUser
